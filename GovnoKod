@@ -1,0 +1,59 @@
+
+extends Control
+
+var men_scene = preload("res://control.tscn")
+onready var mens_pos = preload("res://Ench.gd")
+var id = 0
+var start_click = Vector2(0,0)
+var last_click = Vector2(0,0)
+var biold = Vector2(373,553)
+var lens = {
+			"name" : "jony",
+			"health" : 10,
+			"power" : 14,
+			"power_speed" : 0.8,
+			"power_type" : "mille",
+			"speed" : 0.6,
+			}
+			
+
+func _ready():
+	set_process(true)
+	pass
+
+func _process(delta):
+	if Input.is_action_just_pressed("right"):
+		get_tree().call_group(0, "selected", "gotopoint" )
+	sel()
+	get_node("viev/menus/Label").set_text(str(get_global_mouse_pos()))
+
+func _on_next_pressed():
+	get_tree().quit()
+	
+func sel():
+	if Input.is_action_just_pressed("left"):
+		start_click.x = get_global_mouse_pos().x
+	if Input.is_action_pressed("left"):
+		last_click.x = get_global_mouse_pos().x
+		get_tree().call_group(0, "units", "select",start_click,last_click)
+		update()
+	if not Input.is_action_pressed("left"):
+		start_click = Vector2()
+		last_click = Vector2()
+		update()
+
+	
+func _draw():
+	draw_rect(Rect2(start_click, last_click-start_click),Color (0,1,0,0.1))
+	draw_line(start_click, Vector2(start_click.x, last_click.y),Color (0,1,0))
+	draw_line(start_click, Vector2(last_click.x, start_click.y),Color (0,1,0))
+	draw_line(Vector2(start_click.x, last_click.y),last_click,Color (0,1,0))
+	draw_line(Vector2(last_click.x, start_click.y),last_click,Color (0,1,0))
+
+func _on_basic_button_down():
+	var les = men_scene.instance()
+	var raz = get_node("biold red/main").get_pos()
+	var fon_pos = get_node("fon").get_pos()
+	les.set_pos(Vector2(biold))
+	add_child(les)
+	les.add_to_group("units")
